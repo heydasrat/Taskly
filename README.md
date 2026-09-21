@@ -1,152 +1,55 @@
 # Taskly
 
-Taskly is a full-stack task management application with authenticated user accounts, email verification, password reset workflows, profile management, and personal todo tracking. The product is implemented as a React + Redux frontend and an Express + MongoDB backend, with JWT-based authentication and HTTP-only cookies for session state.
+Taskly is a full-stack task management application for personal productivity, user account management, and secure todo tracking. The project combines a React + Redux frontend with an Express + MongoDB backend to provide account signup, email verification, JWT session handling, profile management, and a private todo dashboard.
 
-This repository represents a working personal productivity app rather than a broad SaaS platform. Its current scope is focused on user lifecycle management and personal task operations for a single authenticated user.
+The current implementation is a single-user productivity app rather than a multi-tenant SaaS platform. It focuses on account lifecycle, security, and personal task management for one authenticated user at a time.
 
-## Overview
+## Why this project exists
 
-Taskly allows a user to:
+Taskly solves the common problem of juggling tasks, deadlines, and personal workflow in a simple interface without introducing unnecessary complexity. The application stores todo data per authenticated user, supports password recovery and verified signup, and keeps user preferences and profile data in sync across the app.
 
-- create an account with username, full name, and password
-- verify email with a 6-digit OTP
-- log in and maintain a session using access and refresh tokens stored in secure cookies
-- view and manage a personal todo list
-- update profile information and avatar image
-- change password
-- reset password using a verified OTP flow
-- toggle light/dark appearance preferences
+## Features
 
-The frontend is built in React with Vite and Redux Toolkit, while the backend uses Express.js, Mongoose, and MongoDB for persistence and auth logic.
+### User account and authentication
 
-## Product scope
+- User registration with full name, email, username, and password validation
+- Email verification through a 6-digit OTP flow
+- Login using either email or username
+- Access token and refresh token generation
+- HTTP-only cookie-based authentication
+- Logout and token cleanup
+- Password reset flow using email OTP verification
+- Current user hydration through the authenticated profile endpoint
 
-This is a single-user task manager with authenticated account management. The codebase currently does not implement:
+### Todo management
 
-- team collaboration or shared tasks
-- role-based access control
-- admin panels
-- pagination on list endpoints
-- public API consumption layers beyond the app itself
-- automated test suites
+- Create todos with a required title and optional description
+- Fetch all todos owned by the current user
+- Fetch a single todo by ID
+- Update a todo title and description
+- Toggle completion status
+- Delete a todo
 
-## Architecture
+### Profile and account settings
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend as React + Redux
-    participant API as Express API
-    participant Auth as JWT + Cookie Middleware
-    participant DB as MongoDB
+- Update username and full name
+- Upload and replace an avatar image
+- Remove avatar image
+- Change password while signed in
+- Toggle between light and dark theme preferences
 
-    User->>Frontend: Sign up / log in / reset password
-    Frontend->>API: HTTP request
-    API->>Auth: Verify JWT when required
-    API->>DB: Read/write user or todo data
-    DB-->>API: Model result
-    API-->>Frontend: ApiResponse payload
-    Frontend->>Frontend: Update Redux auth/todo state
-    Frontend-->>User: Render updated UI
-```
+### Frontend experience
 
-At runtime, the flow is:
+- Public landing and informational pages
+- Auth-only routes for login, registration, OTP verification, and reset flows
+- Protected dashboard and settings routes
+- Redux-based authentication and todo state management
 
-1. The frontend loads the current user from `/auth/me` on startup.
-2. The auth slice stores the user and authentication state in Redux.
-3. Authenticated routes check `isAuthenticated` and `isLoading` before allowing navigation.
-4. Protected API calls include credentials so browser cookies are sent automatically.
-5. The backend verifies JWTs in middleware and attaches the authenticated user to the request.
-6. Controllers enforce ownership checks for todos and user updates.
+## Screenshots
 
-## Repository structure
+No screenshots are currently included in this repository. This README intentionally does not reference image files that do not exist.
 
-```text
-Full Stack Todo/
-├── backend/
-│   ├── public/
-│   ├── src/
-│   │   ├── app.js
-│   │   ├── index.js
-│   │   ├── constant.js
-│   │   ├── config/
-│   │   │   └── config.js
-│   │   ├── controllers/
-│   │   │   ├── todo.controller.js
-│   │   │   ├── user.controller.js
-│   │   │   └── userManagement.controller.js
-│   │   ├── db/
-│   │   │   └── index.js
-│   │   ├── middlewares/
-│   │   │   ├── auth.middleware.js
-│   │   │   └── multer.middleware.js
-│   │   ├── models/
-│   │   │   ├── otp.model.js
-│   │   │   ├── PasswordReset.model.js
-│   │   │   ├── todo.model.js
-│   │   │   └── user.model.js
-│   │   ├── routes/
-│   │   │   ├── todo.route.js
-│   │   │   ├── user.route.js
-│   │   │   └── userManagement.route.js
-│   │   ├── service/
-│   │   │   └── email.service.js
-│   │   ├── utils/
-│   │   │   ├── ApiError.js
-│   │   │   ├── ApiResponse.js
-│   │   │   ├── asyncHandler.js
-│   │   │   ├── otp.utils.js
-│   │   │   ├── response.utils.js
-│   │   │   ├── token.utils.js
-│   │   │   ├── uploadOnCloudinary.js
-│   │   │   └── user.utils.js
-│   │   └── ...
-│   ├── package.json
-│   └── ...
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   ├── index.css
-│   │   ├── app/
-│   │   │   ├── features/
-│   │   │   │   ├── authSlice.js
-│   │   │   │   └── todoSlice.js
-│   │   │   └── store/
-│   │   │       └── store.js
-│   │   ├── assets/
-│   │   ├── components/
-│   │   │   ├── Axios/
-│   │   │   ├── Error/
-│   │   │   ├── ForgotPasswordCMP/
-│   │   │   ├── Home/
-│   │   │   ├── Landing/
-│   │   │   ├── Login/
-│   │   │   ├── Navbar/
-│   │   │   ├── Register/
-│   │   │   ├── ResetPasswordCMP/
-│   │   │   ├── Setting/
-│   │   │   ├── Todo/
-│   │   │   ├── TodoCard/
-│   │   │   ├── TodoContent/
-│   │   │   ├── TodoHeader/
-│   │   │   ├── VerifyEmail/
-│   │   │   └── VerifyOTPCMP/
-│   │   ├── Pages/
-│   │   ├── routes/
-│   │   │   ├── AuthRoutes/
-│   │   │   ├── ProtectedRoutes/
-│   │   │   ├── PublicRoutes/
-│   │   │   └── index.js
-│   │   └── ...
-│   ├── package.json
-│   ├── vite.config.js
-│   ├── tailwind.config.js
-│   └── ...
-├── README.md
-└── ...
-```
+If you want to add product screenshots later, add them in a pull request and then insert the relevant image references here.
 
 ## Tech stack
 
@@ -156,10 +59,10 @@ Full Stack Todo/
 - Vite
 - Redux Toolkit
 - React Router DOM
-- Axios for API calls
-- Tailwind CSS for styling
-- Lucide React for icons
-- ESLint for linting
+- Axios
+- Tailwind CSS
+- Lucide React
+- ESLint
 
 ### Backend
 
@@ -167,135 +70,401 @@ Full Stack Todo/
 - Express 5
 - MongoDB
 - Mongoose 9
-- JWT for access and refresh tokens
-- bcryptjs for password hashing and OTP hashing
-- Nodemailer with Gmail OAuth2 for email delivery
-- Cloudinary for avatar uploads
-- Multer for local temp file handling
-- Helmet for security headers
+- JWT
+- bcryptjs
+- Nodemailer
+- Cloudinary
+- Multer
+- Helmet
 - CORS
-- Express rate limiting
-- dotenv for environment variables
+- Express Rate Limit
+- dotenv
 
-## Features
+### Authentication and integrations
 
-### Authentication
+- JWT access/refresh tokens for session management
+- Secure HTTP-only cookies for the browser session
+- Gmail OAuth2 transport configuration for sending email
+- Cloudinary for avatar uploads
+- MongoDB TTL indexing for OTP expiry
 
-- user registration with validation and unique username/email checks
-- email verification via OTP
-- OTP resend support after registration or reset request
-- login using either email or username
-- access-token and refresh-token generation
-- secure cookie-based session handling
-- logout and cookie cleanup
-- password reset flow with OTP verification and reset token
-- `GET /auth/me` to hydrate the current authenticated user in the client
+## Architecture
 
-### Todo management
-
-- create todo with title and optional description
-- fetch all todos for the authenticated user
-- fetch a single todo by id
-- update title and description
-- toggle completion status
-- delete todo
-- UI-level client-side search, filter, and sort behavior in the page component set
-
-### User settings
-
-- update profile name and username
-- upload avatar as JPEG only
-- delete avatar image
-- change password while authenticated
-- toggle theme preference between light and dark
-
-### Frontend routing and auth UX
-
-- public landing page
-- auth-only pages for login, registration, email verification, password reset flow
-- protected dashboard and settings pages
-- redirect logic to prevent signed-in users from visiting auth pages and unauthenticated users from visiting protected pages
-
-## Authentication architecture
-
-The backend uses JWT-based authentication with cookies:
-
-- `generateAccessAndRefreshToken()` creates a refresh token and stores it on the user document.
-- `login()` issues both tokens and sets them as `accessToken` and `refreshToken` cookies using `httpOnly`, `secure`, and `sameSite: "strict"` configuration.
-- `verifyJWT` middleware reads the access token from cookies or `Authorization: Bearer ...` and verifies it using `ACCESS_TOKEN_SECRET`.
-- `req.user` is populated with the authenticated user for controller access.
-- `logout()` clears both cookies and sets `refreshToken` to `null` on the user record.
+The application is split into a frontend client and a backend API. The client loads the current session through an authenticated request, stores user and todo state in Redux, and routes users between public, auth-only, and protected views.
 
 ```mermaid
-sequenceDiagram
-    User->>Frontend: Enter email + password
-    Frontend->>Backend: POST /v1/api/auth/login
-    Backend->>Database: Validate user and password
-    Backend->>Backend: Generate access + refresh JWTs
-    Backend-->>Frontend: Set HTTP-only cookies
-    Frontend->>Backend: GET /v1/api/auth/me or protected route
-    Backend->>Middleware: verifyJWT
-    Middleware->>Database: Load user by ID
-    Middleware-->>Controller: req.user populated
-    Controller-->>Frontend: ApiResponse payload
+flowchart LR
+    A[React Frontend<br/>Vite + Redux + React Router] -->|HTTP with credentials| B[Express API<br/>Routes + Controllers]
+    B --> C[JWT Middleware<br/>verifyJWT]
+    B --> D[MongoDB<br/>Users + Todos + OTP]
+    B --> E[Cloudinary<br/>Avatar upload]
+    B --> F[Gmail OAuth2<br/>Email delivery]
+    C -->|valid token| B
+    A -->|reads auth state| G[Redux Store]
 ```
 
-### Password reset flow
+The runtime flow is:
 
-The current reset workflow is:
+1. The frontend initializes the app and calls the authenticated current-user endpoint.
+2. Redux stores the authenticated user and loading state.
+3. Route guards prevent unauthenticated access to protected pages and signed-in users from accessing auth flows.
+4. Protected API calls include browser cookies automatically because the client is configured with `withCredentials: true`.
+5. The backend verifies tokens in middleware and attaches the authenticated user to the request object.
+6. Controllers enforce ownership checks so a user only sees and edits their own todo data.
 
-1. User submits email to `/auth/request-password-reset`.
-2. Backend checks that the user exists and is verified.
-3. A one-time OTP is generated and emailed.
-4. Client verifies OTP at `/auth/verify-otp`.
-5. Backend returns a signed reset token for the verified user.
-6. Client submits `resetToken`, `newPassword`, and `confirmPassword` to `/auth/reset-password`.
-7. Backend verifies the reset token, checks a password match, hashes the new password through the Mongoose pre-save hook, and updates the user.
+## Project structure
 
-### Email verification flow
+```text
+Full Stack Todo/
+├── LICENSE
+├── README.md
+├── backend/
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public/
+│   └── src/
+│       ├── app.js
+│       ├── constant.js
+│       ├── index.js
+│       ├── config/
+│       │   └── config.js
+│       ├── controllers/
+│       │   ├── todo.controller.js
+│       │   ├── user.controller.js
+│       │   └── userManagement.controller.js
+│       ├── db/
+│       │   └── index.js
+│       ├── middlewares/
+│       │   ├── auth.middleware.js
+│       │   └── multer.middleware.js
+│       ├── models/
+│       │   ├── PasswordReset.model.js
+│       │   ├── otp.model.js
+│       │   ├── todo.model.js
+│       │   └── user.model.js
+│       ├── routes/
+│       │   ├── todo.route.js
+│       │   ├── user.route.js
+│       │   └── userManagement.route.js
+│       ├── service/
+│       │   └── email.service.js
+│       └── utils/
+│           ├── ApiError.js
+│           ├── ApiResponse.js
+│           ├── asyncHandler.js
+│           ├── otp.utils.js
+│           ├── response.utils.js
+│           ├── token.utils.js
+│           ├── uploadOnCloudinary.js
+│           └── user.utils.js
+├── frontend/
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── postcss.config.js
+│   ├── tailwind.config.js
+│   ├── vite.config.js
+│   ├── public/
+│   └── src/
+│       ├── App.jsx
+│       ├── index.css
+│       ├── main.jsx
+│       ├── app/
+│       │   ├── features/
+│       │   │   ├── authSlice.js
+│       │   │   └── todoSlice.js
+│       │   └── store/
+│       │       └── store.js
+│       ├── assets/
+│       ├── components/
+│       │   ├── Axios/
+│       │   ├── Error/
+│       │   ├── ForgotPasswordCMP/
+│       │   ├── Home/
+│       │   ├── Landing/
+│       │   ├── Login/
+│       │   ├── NavBar/
+│       │   ├── PrivacyCMP/
+│       │   ├── Register/
+│       │   ├── ResetPasswordCMP/
+│       │   ├── Setting/
+│       │   ├── TermsCMP/
+│       │   ├── Todo/
+│       │   ├── TodoCard/
+│       │   ├── TodoContent/
+│       │   ├── TodoHeader/
+│       │   ├── VerifyEmail/
+│       │   └── VerifyOTPCMP/
+│       ├── Pages/
+│       │   ├── Footer/
+│       │   ├── ForgotPassword/
+│       │   ├── Help/
+│       │   ├── Home/
+│       │   ├── LandingPage/
+│       │   ├── Login/
+│       │   ├── Privacy/
+│       │   ├── Register/
+│       │   ├── ResetPassword/
+│       │   ├── Setting/
+│       │   ├── Term/
+│       │   ├── VerifyEmail/
+│       │   └── VerifyOTP/
+│       └── routes/
+│           ├── AuthRoutes/
+│           ├── ProtectedRoutes/
+│           ├── PublicRoutes/
+│           └── index.js
+```
 
-Registration creates a new user and immediately sends an OTP to the provided email address. The user is not considered authenticated until they complete `/auth/verify-email` and the backend marks `isVerified = true`.
+## Prerequisites
 
-### Password hashing and OTP protection
+- Node.js 18+ recommended for the current frontend and backend toolchain
+- MongoDB instance or MongoDB-compatible local database
+- Cloudinary account for avatar uploads
+- Gmail account configured for OAuth2 email sending
+- A browser for the frontend app
 
-- User passwords are hashed in the Mongoose `pre("save")` hook using `bcryptjs`.
-- OTP documents are stored hashed, not in plaintext.
-- OTP verification checks expiry and compares against a bcrypt hash.
-- OTP documents include an expiration date with a MongoDB TTL index via `expiresAt` and `expireAfterSeconds: 0`.
+## Installation and local setup
 
-## Database architecture
+### 1. Clone the repository
 
-The application uses MongoDB via Mongoose. The main data model relationships are:
+```bash
+git clone <your-repository-url>
+cd "Full Stack Todo"
+```
 
-### User model
+### 2. Install backend dependencies
 
-The `User` model stores:
+```bash
+cd backend
+npm install
+```
 
-- `username` — unique, lowercase, 3-20 chars, alphanumeric/underscore only
-- `fullName` — required string, trimmed
-- `email` — unique, validated email
-- `password` — hashed password
-- `avatar` — object containing `url` and `public_id`
-- `preferences.theme` — `light` or `dark` default
-- `refreshToken` — stored JWT reference for refresh flow
-- `isVerified` — boolean, defaults to `false`
+### 3. Configure the backend environment
+
+Create a `.env` file inside the `backend` directory with the required values.
+
+### 4. Start the backend
+
+```bash
+npm run dev
+```
+
+This runs the application from `backend/src/index.js`.
+
+### 5. Install frontend dependencies
+
+```bash
+cd ../frontend
+npm install
+```
+
+### 6. Configure the frontend environment
+
+Create a `.env` or `.env.local` file inside the `frontend` directory with:
+
+```env
+VITE_API_URL=http://localhost:3000/v1/api
+```
+
+### 7. Start the frontend
+
+```bash
+npm run dev
+```
+
+The Vite dev server typically runs on `http://localhost:5173` unless otherwise configured.
+
+### 8. Production build
+
+From the frontend directory:
+
+```bash
+npm run build
+```
+
+From the backend directory:
+
+```bash
+npm run start
+```
+
+## Environment variables
+
+The backend reads environment variables from `backend/.env` and validates them on startup in `backend/src/config/config.js`.
+
+```env
+PORT=3000
+MONGODB_URI=mongodb://localhost:27017
+CORS_ORIGIN=http://localhost:5173
+ACCESS_TOKEN_SECRET=replace-with-long-random-secret
+ACCESS_TOKEN_EXPIRY=1d
+REFRESH_TOKEN_SECRET=replace-with-long-random-secret
+REFRESH_TOKEN_EXPIRY=7d
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+GOOGLE_REFRESH_TOKEN=your-google-refresh-token
+EMAIL_USER=your-gmail-address
+RESET_PASSWORD_TOKEN=replace-with-password-reset-secret
+RESET_PASSWORD_TOKEN_EXPIRY=10m
+```
+
+The frontend reads the API base URL from `frontend/.env`:
+
+```env
+VITE_API_URL=http://localhost:3000/v1/api
+```
+
+Notes:
+
+- These values are required by the project configuration and are checked when the backend starts.
+- Do not commit real secrets or tokens to the repository.
+- The Gmail OAuth2 variables are used to send verification and reset emails through the configured Gmail account.
+
+## API documentation
+
+All routes are mounted under the backend base namespace:
+
+- `/v1/api/auth/*`
+- `/v1/api/user/*`
+- `/v1/api/todo/*`
+
+### Authentication endpoints
+
+| Method | Endpoint | Auth required | Description |
+| --- | --- | --- | --- |
+| GET | `/healthz` | No | Health-check route for the backend. |
+| POST | `/v1/api/auth/register` | No | Create a user and send an email verification OTP. |
+| POST | `/v1/api/auth/verify-email` | No | Verify a 6-digit OTP and mark the user as verified. |
+| POST | `/v1/api/auth/login` | No | Log in with `identifier` and `password`; sets auth cookies. |
+| POST | `/v1/api/auth/logout` | Yes | Clears access and refresh cookies and clears the refresh token. |
+| GET | `/v1/api/auth/me` | Yes | Returns the current authenticated user. |
+| POST | `/v1/api/auth/request-password-reset` | No | Sends a password reset OTP to the user email. |
+| POST | `/v1/api/auth/verify-otp` | No | Verifies password reset OTP and returns a reset token. |
+| PATCH | `/v1/api/auth/reset-password` | No | Validates the reset token and changes the password. |
+| POST | `/v1/api/auth/resend-otp` | No | Resends the registration OTP. |
+| PATCH | `/v1/api/auth/refresh-access-token` | No | Refresh endpoint is defined in the router and implemented in the controller. |
+
+### User management endpoints
+
+| Method | Endpoint | Auth required | Description |
+| --- | --- | --- | --- |
+| PATCH | `/v1/api/user/change-password` | Yes | Change password using the current password and a new password. |
+| PATCH | `/v1/api/user/update-profile` | Yes | Update `username`, `fullName`, and optionally upload a JPEG avatar. |
+| PATCH | `/v1/api/user/delete-avatar` | Yes | Remove the current avatar from Cloudinary and clear the stored avatar reference. |
+| PATCH | `/v1/api/user/toggle-theme` | Yes | Set the theme to `light` or `dark` in the user preferences. |
+
+### Todo endpoints
+
+| Method | Endpoint | Auth required | Description |
+| --- | --- | --- | --- |
+| POST | `/v1/api/todo/todos` | Yes | Create a new todo. |
+| GET | `/v1/api/todo/todos` | Yes | List all todos for the authenticated user. |
+| GET | `/v1/api/todo/todos/:todoId` | Yes | Fetch one todo by ID if it belongs to the user. |
+| PATCH | `/v1/api/todo/todos/:todoId` | Yes | Update the todo title and description. |
+| PATCH | `/v1/api/todo/todos/:todoId/toggle` | Yes | Toggle the completion status. |
+| DELETE | `/v1/api/todo/todos/:todoId` | Yes | Remove the todo. |
+
+### Request format notes
+
+- `POST /v1/api/auth/register` expects `fullName`, `email`, `username`, and `password`.
+- `POST /v1/api/auth/login` expects `identifier` and `password`.
+- `POST /v1/api/auth/verify-email` expects `email` and `otp`.
+- `POST /v1/api/auth/request-password-reset` expects `email`.
+- `POST /v1/api/auth/verify-otp` expects `email` and `otp`.
+- `PATCH /v1/api/auth/reset-password` expects `resetToken`, `newPassword`, and `confirmPassword`.
+- `PATCH /v1/api/user/update-profile` accepts multipart form data. The avatar file must be JPEG (`image/jpeg` or `.jpg`/`.jpeg`).
+- `PATCH /v1/api/user/change-password` expects `oldPassword` and `newPassword`.
+
+### Response format
+
+The backend uses a consistent success wrapper from `sendResponse()`:
+
+```json
+{
+  "statusCode": 200,
+  "data": { "_id": "..." },
+  "message": "Operation completed successfully",
+  "success": true
+}
+```
+
+Error responses follow the global Express error middleware format:
+
+```json
+{
+  "success": false,
+  "message": "Invalid credentials",
+  "errors": []
+}
+```
+
+## Authentication and security
+
+Taskly uses JWT-based authentication with cookies for browser sessions.
+
+- The `verifyJWT` middleware checks `req.cookies.accessToken` first and falls back to the `Authorization: Bearer ...` header.
+- Access tokens are signed using `ACCESS_TOKEN_SECRET` and validated with `jwt.verify()`.
+- Refresh tokens are persisted on the user record and verified during the refresh endpoint.
+- Cookies are configured with `httpOnly`, `secure`, and `sameSite: "strict"`.
+- User passwords are hashed in the Mongoose `pre("save")` hook with `bcryptjs`.
+- OTP values are also hashed before storage and compared against a bcrypt hash on verification.
+- Public API routes and protected routes are rate limited with `express-rate-limit`.
+- The app enables `helmet()` and CORS with a configured origin.
+
+The email verification and password reset flows are as follows:
+
+1. A user registers and receives a 6-digit OTP.
+2. The code must be verified before `isVerified` is set to `true`.
+3. A verified user can request a password reset OTP.
+4. The client submits the verified OTP and receives a signed reset token.
+5. The token is used to set a new password; the previous refresh token is cleared in the process.
+
+## Database design
+
+The project uses MongoDB via Mongoose. The most important collections are `User`, `Todo`, and `OTP`.
+
+### User schema
+
+Key fields:
+
+- `username`: unique, lowercase, 3–20 characters, alphanumeric/underscore only
+- `fullName`: required, trimmed string
+- `email`: unique, validated email
+- `password`: hashed password
+- `avatar`: object with `url` and `public_id`
+- `preferences.theme`: `light` or `dark`
+- `refreshToken`: stored refresh token value
+- `isVerified`: boolean indicating whether the user completed email verification
 - timestamps
 
-### Todo model
+### Todo schema
 
-The `Todo` model stores:
+Key fields:
 
-- `user` — `ObjectId` reference to `User`
-- `title` — required short string
-- `description` — optional long string
-- `isCompleted` — boolean default false
+- `user`: reference to the owning user
+- `title`: required todo title
+- `description`: optional description string
+- `isCompleted`: boolean completion flag
 - timestamps
 
-The model is intentionally scoped to a single owner: every todo query is filtered by `user: req.user._id`, so users can only access their own tasks.
+Every todo query is scoped by the authenticated user ID, which prevents cross-user access.
+
+### OTP schema
+
+- Stores `email`, `otp`, and `expiresAt`
+- Hashes OTP values before saving
+- Uses a MongoDB TTL index on `expiresAt`
 
 ```mermaid
 erDiagram
     USER ||--o{ TODO : owns
+    USER ||--o{ OTP : receives
+
     USER {
       string username
       string fullName
@@ -315,209 +484,103 @@ erDiagram
       datetime createdAt
       datetime updatedAt
     }
+
+    OTP {
+      string email
+      string otp
+      datetime expiresAt
+      datetime createdAt
+      datetime updatedAt
+    }
 ```
 
-## API reference
+## Deployment
 
-All routes are mounted under the versioned backend namespace:
+No production deployment configuration or CI/CD pipeline is present in this repository.
 
-- `/v1/api/auth/*`
-- `/v1/api/user/*`
-- `/v1/api/todo/*`
+The project is set up as a standard local development app with:
 
-### Authentication endpoints
+- a Node.js backend process using `npm run start`
+- a Vite frontend build using `npm run build`
+- a configured CORS origin and backend port
 
-| Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
-| GET | `/healthz` | No | Simple health-check route for the server. |
-| POST | `/v1/api/auth/register` | No | Create user and send verification OTP. |
-| POST | `/v1/api/auth/verify-email` | No | Verify OTP and mark the user as verified. |
-| POST | `/v1/api/auth/login` | No | Authenticate with `identifier` + `password`; sets auth cookies. |
-| POST | `/v1/api/auth/logout` | Yes | Clears cookies and nulls the stored refresh token. |
-| GET | `/v1/api/auth/me` | Yes | Returns the current authenticated user. |
-| POST | `/v1/api/auth/request-password-reset` | No | Sends OTP for a verified user to reset password. |
-| POST | `/v1/api/auth/verify-otp` | No | Verifies reset OTP and returns a reset token. |
-| PATCH | `/v1/api/auth/reset-password` | No | Validates a reset token and changes the password. |
-| POST | `/v1/api/auth/resend-otp` | No | Resends OTP to the provided email. |
-| PATCH | `/v1/api/auth/refresh-access-token` | No | Route exists in the router but is not implemented in controller logic in the current codebase. |
+For production, you would still need to provide:
 
-### User management endpoints
+- a MongoDB service
+- Cloudinary credentials
+- Gmail OAuth2 credentials
+- a valid `CORS_ORIGIN` pointing at the production frontend host
+- a reverse proxy or hosting solution for the frontend and backend
 
-| Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
-| PATCH | `/v1/api/user/change-password` | Yes | Change password using current password and new password. |
-| PATCH | `/v1/api/user/update-profile` | Yes | Update username/full name and optionally upload an avatar carousel. |
-| PATCH | `/v1/api/user/delete-avatar` | Yes | Delete the current avatar from Cloudinary and clear the DB reference. |
-| PATCH | `/v1/api/user/toggle-theme` | Yes | Set `preferences.theme` to `light`, `dark`, or `system` according to validation logic; the schema currently only allows `light` and `dark`. |
+## Available scripts
 
-### Todo endpoints
-
-| Method | Endpoint | Auth | Description |
-| --- | --- | --- | --- |
-| POST | `/v1/api/todo/todos` | Yes | Create a todo for the authenticated user. |
-| GET | `/v1/api/todo/todos` | Yes | Fetch all todos for the authenticated user. |
-| GET | `/v1/api/todo/todos/:todoId` | Yes | Fetch one todo by id if it belongs to the user. |
-| PATCH | `/v1/api/todo/todos/:todoId` | Yes | Update a todo owned by the user. |
-| PATCH | `/v1/api/todo/todos/:todoId/toggle` | Yes | Toggle completion state. |
-| DELETE | `/v1/api/todo/todos/:todoId` | Yes | Delete a todo owned by the user. |
-
-## Request and response behavior
-
-The project uses a consistent API response wrapper defined by `ApiResponse`:
-
-```json
-{
-  "statusCode": 200,
-  "data": { "_id": "..." },
-  "message": "User logged in successfully",
-  "success": true
-}
-```
-
-Error responses are returned by the global Express error handler with:
-
-```json
-{
-  "success": false,
-  "message": "Invalid credentials",
-  "errors": []
-}
-```
-
-The code validates input in controllers and returns `ApiError` instances with status codes such as `400`, `401`, `404`, and `409`.
-
-## Frontend state management
-
-The frontend uses Redux Toolkit with two slices:
-
-- `authSlice` — stores authentication state and current user
-- `todoSlice` — stores todo collection and loading state
-
-The root store is configured in `frontend/src/app/store/store.js`.
-
-Relevant behavior:
-
-- `App.jsx` calls `/auth/me` immediately on startup and dispatches `login` or `logout`.
-- `ProtectedRoutes` blocks unauthenticated users from route access.
-- `AuthRoutes` prevents signed-in users from seeing login/register pages.
-- `Todo.jsx` fetches `/todo/todos` on dashboard load and populates the Redux todo state.
-- `SettingCMP` updates the Redux auth state after profile or theme changes.
-
-## Frontend routes
-
-The route tree is defined in `frontend/src/main.jsx`.
-
-### Public routes
-
-- `/` — landing page
-
-### Auth routes
-
-- `/login`
-- `/register`
-- `/verify-email`
-- `/request-password-reset`
-- `/verify-otp`
-- `/reset-password`
-
-### Protected routes
-
-- `/dashboard`
-- `/setting`
-
-Signed-in users are redirected to `/dashboard` if they visit auth pages. Unauthenticated users are redirected to `/login` when visiting protected pages.
-
-## Environment configuration
-
-The backend expects environment variables to be defined before the server starts. The application explicitly checks these values in `backend/src/config/config.js`:
-
-```env
-PORT=3000
-MONGODB_URI=mongodb://localhost:27017
-CORS_ORIGIN=http://localhost:5173
-ACCESS_TOKEN_SECRET=replace-with-access-secret
-ACCESS_TOKEN_EXPIRY=1d
-REFRESH_TOKEN_SECRET=replace-with-refresh-secret
-REFRESH_TOKEN_EXPIRY=7d
-CLOUDINARY_CLOUD_NAME=your-cloud-name
-CLOUDINARY_API_KEY=your-api-key
-CLOUDINARY_API_SECRET=your-api-secret
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-GOOGLE_REFRESH_TOKEN=your-google-refresh-token
-EMAIL_USER=your-gmail-address
-RESET_PASSWORD_TOKEN=replace-with-password-reset-secret
-RESET_PASSWORD_TOKEN_EXPIRY=10m
-```
-
-The frontend expects a Vite environment variable:
-
-```env
-VITE_API_URL=http://localhost:3000/v1/api
-```
-
-Store the backend settings in a `.env` file in the `backend` directory and the frontend value in a `.env` or `.env.local` file in the `frontend` directory.
-
-## Local development
-
-### Prerequisites
-
-- Node.js 18+
-- MongoDB instance or MongoDB-compatible database
-- Cloudinary account for avatar uploads
-- Gmail account configured for SMTP OAuth2 delivery
-
-### Backend setup
-
-From the `backend` directory:
+### Backend (`backend/package.json`)
 
 ```bash
-npm install
 npm run dev
-```
-
-The server starts from `src/index.js` and listens on the configured `PORT`.
-
-### Frontend setup
-
-From the `frontend` directory:
-
-```bash
-npm install
-npm run dev
-```
-
-This starts Vite's development server. The app then uses `VITE_API_URL` to communicate with the backend.
-
-### Production build
-
-The frontend supports a production bundle:
-
-```bash
-npm run build
-```
-
-The backend is configured for a Node.js process with `npm run start`:
-
-```bash
 npm run start
 ```
 
-## Security features implemented
+### Frontend (`frontend/package.json`)
 
-The following protections are present in the current codebase:
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run preview
+```
 
-- JWT access tokens verified in middleware
-- refresh tokens stored on the user document and cleared on logout/change-password
-- HTTP-only, secure, same-site cookies for auth state
-- password hashing with `bcryptjs`
-- OTP hashing before DB persistence
-- TTL-based expiry on OTP records
-- rate limiting on all requests and a stricter limiter for auth routes
-- Helmet security headers enabled globally
-- CORS enabled with configured origin restrictions
-- structured error handling via custom `ApiError` and `ApiResponse`
-- ownership checks to ensure users can only access their own todos
+No automated test script was found in either package configuration.
+
+## Contributing
+
+Contributions are welcome. The recommended workflow is:
+
+1. Fork the repository.
+2. Create a feature branch from `main` or the default branch.
+3. Make your changes in the relevant backend or frontend directory.
+4. Verify the change locally with the same commands used during development.
+5. Review the project structure and follow the existing patterns in controllers, routes, components, and Redux slices.
+6. Open a pull request with a clear description of the update and any validation performed.
+
+Please keep changes consistent with the existing architecture and avoid broad refactors without a clear reason.
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for the full text.
+
+## Acknowledgments and contact
+
+No maintainer, social profile, or contact information is currently defined in this repository, so this section is intentionally omitted.
+
+## Roadmap and limitations
+
+### Current functionality
+
+The project currently supports a private personal workflow for:
+
+- signup and email verification
+- login/logout
+- authenticated todo list management
+- profile updates and avatar upload
+- password reset via OTP
+- light/dark user theme selection
+
+### Known limitations
+
+- There is no automated test suite in the repository.
+- There is no multi-user or team-based sharing model.
+- There is no role-based authorization or admin management layer.
+- Todo endpoints do not implement pagination or filtering beyond the simple fetch-all behavior.
+- The backend exposes a `PasswordReset` model file, but the active flow implemented in `user.controller.js` uses a signed JWT reset token rather than this model directly.
+- The theme validation allows `system`, but the actual `User` schema only permits `light` and `dark` values.
+- The Gmail OAuth2 configuration is required for email delivery, and the project does not contain a fallback SMTP or alternative delivery mechanism.
+- The frontend includes a Google OAuth dependency, but the current application flow does not validate a separate Google sign-in implementation.
+
+## Summary
+
+Taskly is a functional personal productivity application with a secure authentication layer, email verification, reset flows, and a todo dashboard. The repository is suitable for local development and experimentation, but it is not currently a production deployment package or a fully hardened multi-user SaaS product.
+
 - file upload limit enforcement via Multer (`5 MB` max per file)
 - Cloudinary avatar upload and cleanup of stale avatar assets
 - validation for required fields, email format, username format, and password length
@@ -597,3 +660,9 @@ The repository demonstrates practical implementation patterns for:
 - protected-route UI logic
 
 It is a solid starting point for a small production-ready personal productivity app, with the main gaps being testing, API completeness review, and a few cleanup opportunities in the current implementation.
+
+
+## AI Assistance
+
+GitHub Copilot was used to assist with generating and refining this project's documentation. The project author is responsible for reviewing and maintaining the README.
+
