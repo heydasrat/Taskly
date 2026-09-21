@@ -1,0 +1,89 @@
+
+import dotenv from "dotenv";
+
+dotenv.config();
+
+if (!process.env.PORT) {
+  throw new Error("PORT is not defined");
+}
+
+if (!process.env.MONGODB_URI) {
+  throw new Error("MONGODB_URI is not defined");
+}
+
+if (!process.env.CORS_ORIGIN) {
+  throw new Error("CORS_ORIGIN is not defined");
+}
+
+if (!process.env.ACCESS_TOKEN_SECRET) {
+  throw new Error("ACCESS_TOKEN_SECRET is not defined");
+}
+
+if (!process.env.ACCESS_TOKEN_EXPIRY) {
+  throw new Error("ACCESS_TOKEN_EXPIRY is not defined");
+}
+
+if (!process.env.REFRESH_TOKEN_SECRET) {
+  throw new Error("REFRESH_TOKEN_SECRET is not defined");
+}
+
+if (!process.env.REFRESH_TOKEN_EXPIRY) {
+  throw new Error("REFRESH_TOKEN_EXPIRY is not defined");
+}
+
+if (!process.env.CLOUDINARY_CLOUD_NAME) {
+  throw new Error("CLOUDINARY_CLOUD_NAME is not defined");
+}
+
+if (!process.env.CLOUDINARY_API_KEY) {
+  throw new Error("CLOUDINARY_API_KEY is not defined");
+}
+
+if (!process.env.CLOUDINARY_API_SECRET) {
+  throw new Error("CLOUDINARY_API_SECRET is not defined");
+}
+
+if (!process.env.GOOGLE_CLIENT_ID) {
+  throw new Error("GOOGLE_CLIENT_ID is not defined");
+}
+
+if (!process.env.GOOGLE_CLIENT_SECRET) {
+  throw new Error("GOOGLE_CLIENT_SECRET is not defined");
+}
+
+if (!process.env.GOOGLE_REFRESH_TOKEN) {
+  throw new Error("GOOGLE_REFRESH_TOKEN is not defined");
+}
+
+if (!process.env.EMAIL_USER) {
+  throw new Error("EMAIL_USER is not defined");
+}
+
+if (!process.env.RESET_PASSWORD_TOKEN) {
+  throw new Error("RESET_PASSWORD_TOKEN is not defined");
+}
+
+if (!process.env.RESET_PASSWORD_TOKEN_EXPIRY) {
+  throw new Error("RESET_PASSWORD_TOKEN_EXPIRY is not defined");
+}
+
+const config = {
+  port: process.env.PORT,
+  mongodbUri: process.env.MONGODB_URI,
+  corsOrigin: process.env.CORS_ORIGIN,
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
+  accessTokenExpiry: process.env.ACCESS_TOKEN_EXPIRY,
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
+  refreshTokenExpiry: process.env.REFRESH_TOKEN_EXPIRY,
+  cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
+  cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+  cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
+  googleClientId: process.env.GOOGLE_CLIENT_ID,
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  googleRefreshToken: process.env.GOOGLE_REFRESH_TOKEN,
+  googleUserEmail: process.env.EMAIL_USER,
+  passwordResetToken: process.env.RESET_PASSWORD_TOKEN,
+  passwordResetTokenExpiry: process.env.RESET_PASSWORD_TOKEN_EXPIRY,
+};
+
+export default config;
