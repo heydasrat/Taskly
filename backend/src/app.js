@@ -28,11 +28,17 @@ app.use(cors({
 
 app.use(helmet())
 
-const rateLimitHandler = asyncHandler(async (req, res) => {
-  throw new ApiError(429, 'Too many requests. Please try again later.')
-})
 
+const rateLimitHandler = (req, res, next) => {
+  next(
+    new ApiError(
+      429,
+      "Too many requests. Please try again later."
+    )
+  )
+}
 
+// General limiter: applies to the entire API
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 300,
@@ -42,9 +48,7 @@ const limiter = rateLimit({
   handler: rateLimitHandler
 })
 
-app.use(limiter)
-
-
+// Authentication limiter: login, registration, etc.
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
@@ -55,8 +59,22 @@ const authLimiter = rateLimit({
   handler: rateLimitHandler
 })
 
-app.use('/v1/api/auth', authLimiter)
-app.use('/v1/api/user', authLimiter)
+// User-management limiter: profile, password, theme, avatar, etc.
+const userLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 60,
+  standardHeaders: true,
+  legacyHeaders: false,
+  ipv6Subnet: 56,
+  handler: rateLimitHandler
+})
+
+// Apply the general limiter first
+app.use(limiter)
+
+// Apply stricter limits to specific route groups
+app.use("/v1/api/auth", authLimiter)
+app.use("/v1/api/user", userLimiter)
 
 
 app.use(express.json({ limit: '1mb' }))

@@ -243,7 +243,7 @@ const logout = asyncHandler(async (req, res) => {
             },
         },
         {
-            new: true,
+            returnDocument: "after",
         }
     );
 
