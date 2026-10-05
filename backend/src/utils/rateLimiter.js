@@ -1,4 +1,5 @@
 import rateLimit from "express-rate-limit"
+import ApiError from '../utils/ApiError.js'
 
 const rateLimitHandler = (req, res, next) => {
   next(
