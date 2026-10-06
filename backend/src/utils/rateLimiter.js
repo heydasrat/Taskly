@@ -10,7 +10,6 @@ const rateLimitHandler = (req, res, next) => {
   )
 }
 
-// General limiter: applies to the entire API
 export const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 300,
@@ -20,7 +19,6 @@ export const limiter = rateLimit({
   handler: rateLimitHandler
 })
 
-// Authentication limiter: login, registration, etc.
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 10,
@@ -31,7 +29,6 @@ export const authLimiter = rateLimit({
   handler: rateLimitHandler
 })
 
-// User-management limiter: profile, password, theme, avatar, etc.
 export const userLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   limit: 60,

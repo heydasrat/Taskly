@@ -125,11 +125,11 @@ const Navbar = () => {
 
     return (
         <header
-            className={`tk-root sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-colors duration-200 ${headerClass}`}
+            className={`tk-app-navbar sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-colors duration-200 ${headerClass}`}
         >
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
-                .tk-root {
+                .tk-app-navbar {
                     font-family: 'Instrument Sans', ui-sans-serif, system-ui,
                     -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
                     font-feature-settings: 'ss01', 'cv01';

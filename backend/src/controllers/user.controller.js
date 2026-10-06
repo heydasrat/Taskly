@@ -9,17 +9,13 @@ import OTP from "../models/otp.model.js";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import { publicUserObj } from "../utils/user.utils.js";
+import options from "../utils/cookiesOption.js";
 import {
     generatePasswordResetToken,
     generateAccessAndRefreshToken,
 } from "../utils/token.utils.js";
 import { sendResponse } from "../utils/response.utils.js";
 
-const options = {
-    secure: true,
-    httpOnly: true,
-    sameSite: "strict",
-};
 
 const register = asyncHandler(async (req, res) => {
     const {
@@ -569,7 +565,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         throw new ApiError(
             401,
             error?.message ||
-                "Invalid refresh token"
+            "Invalid refresh token"
         );
     }
 });

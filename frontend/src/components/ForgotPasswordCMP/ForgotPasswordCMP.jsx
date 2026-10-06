@@ -1,50 +1,47 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, Lock } from "lucide-react";
+import { ArrowLeft, Lock, Check } from "lucide-react";
 import api from "../Axios/Axios.js";
 import ErrorMessage from "../Error/Error.jsx";
 
-const Wordmark = ({ tone = "dark" }) => (
+const recoverySteps = [
+    { label: "Enter your account email", meta: "Now", active: true },
+    { label: "Enter the verification code", meta: "Next", active: false },
+    { label: "Choose a new password", meta: "Then", active: false },
+];
+
+const inputClass =
+    "h-12 w-full rounded-lg border border-[#dadce0] bg-white px-3.5 text-[15px] text-[#202124] outline-none transition-colors " +
+    "placeholder:text-[#80868b] hover:border-[#80868b] focus:border-[#1a73e8] focus:ring-1 focus:ring-[#1a73e8]";
+
+const Wordmark = () => (
     <div className="flex items-center gap-2.5">
-        <div
-            className={`w-8 h-8 rounded-[10px] grid place-items-center ${
-                tone === "dark"
-                    ? "bg-white/10 text-white ring-1 ring-inset ring-white/15"
-                    : "bg-[#131A22] text-white"
-            }`}
-        >
-            <Lock size={15} strokeWidth={2.2} />
+        <div className="grid h-8 w-8 place-items-center rounded-full bg-[#1a73e8] text-white">
+            <Check size={16} strokeWidth={3} />
         </div>
-        <span
-            className={`text-[17px] font-semibold tracking-[-0.02em] ${
-                tone === "dark" ? "text-white" : "text-[#131A22]"
-            }`}
-        >
+        <span className="text-[22px] font-medium tracking-[-0.01em] text-[#5f6368]">
             Taskly
         </span>
     </div>
 );
 
-const Step = ({ label, meta, active, delay }) => (
-    <li
-        className="tk-rise flex items-center gap-3 py-2.5"
-        style={{ animationDelay: `${delay}ms` }}
-    >
+const Step = ({ label, meta, active }) => (
+    <li className="flex items-center gap-3.5 py-3">
         <span
-            className={`w-[18px] h-[18px] shrink-0 rounded-md grid place-items-center ${
-                active ? "bg-[#1F8A70] text-white" : "ring-1 ring-inset ring-white/25"
+            className={`grid h-5 w-5 shrink-0 place-items-center rounded-full border-2 ${
+                active ? "border-[#1a73e8] bg-white" : "border-[#dadce0]"
             }`}
         >
-            {active && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+            {active && <span className="h-2 w-2 rounded-full bg-[#1a73e8]" />}
         </span>
         <span
-            className={`flex-1 text-[13.5px] leading-snug ${
-                active ? "text-white/90" : "text-white/50"
+            className={`flex-1 text-[14px] ${
+                active ? "text-[#202124]" : "text-[#5f6368]"
             }`}
         >
             {label}
         </span>
-        <span className="text-[11.5px] text-white/35 tabular-nums">{meta}</span>
+        <span className="text-[12px] tabular-nums text-[#80868b]">{meta}</span>
     </li>
 );
 
@@ -72,89 +69,77 @@ const ForgotPasswordCMP = () => {
         }
     };
 
-    const inputBase =
-        "w-full rounded-[10px] bg-white px-3.5 py-3 text-[14.5px] text-[#131A22] placeholder:text-[#9AA3AD] " +
-        "border border-[#DCE0E5] outline-none transition-[border-color,box-shadow] duration-150 " +
-        "focus:border-[#1F8A70] focus:shadow-[0_0_0_3.5px_rgba(31,138,112,0.14)]";
-
     return (
-        <div className="tk-root min-h-screen bg-[#EDEFF2] text-[#131A22] antialiased">
-            <style>{`
-                @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
-                .tk-root{font-family:'Instrument Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-feature-settings:'ss01','cv01';}
-                @keyframes tk-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-                .tk-rise{animation:tk-rise .6s cubic-bezier(.22,.68,.28,1) both}
-                @keyframes tk-grow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-                .tk-bar{transform-origin:left;animation:tk-grow 1s cubic-bezier(.22,.68,.28,1) .55s both}
-                @media (prefers-reduced-motion:reduce){
-                    .tk-rise,.tk-bar{animation:none!important}
-                }
-            `}</style>
+        <div className="min-h-screen bg-white font-['Google_Sans',Roboto,system-ui,-apple-system,'Segoe_UI',Arial,sans-serif] text-[#202124] antialiased">
+            <div className="min-h-screen lg:grid lg:grid-cols-[1fr_1fr]">
 
-            <div className="min-h-screen lg:grid lg:grid-cols-[1.02fr_1fr]">
-                <aside className="relative hidden lg:flex flex-col justify-between overflow-hidden bg-[#131A22] px-14 py-12">
-                    <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute -top-40 -left-24 h-[460px] w-[460px] rounded-full opacity-[0.55] blur-3xl"
-                        style={{ background: "radial-gradient(circle, rgba(31,138,112,0.45) 0%, rgba(19,26,34,0) 70%)" }}
-                    />
+                {/* ---------------- Brand panel ---------------- */}
+                <aside className="hidden flex-col justify-between bg-[#e8f0fe] px-14 py-12 lg:flex">
+                    <Wordmark />
 
-                    <div className="relative">
-                        <Wordmark tone="dark" />
-                    </div>
-
-                    <div className="relative max-w-[26rem]">
-                        <h2 className="text-[34px] leading-[1.14] font-semibold tracking-[-0.03em] text-white">
+                    <div className="max-w-[28rem]">
+                        <h2 className="text-[40px] font-normal leading-[1.15] tracking-[-0.02em]">
                             Lost your password? You&apos;ll be back in under a minute.
                         </h2>
-                        <p className="mt-4 text-[14.5px] leading-relaxed text-white/45">
+                        <p className="mt-4 text-[16px] leading-relaxed text-[#5f6368]">
                             We&apos;ll email you a one-time code to confirm it&apos;s really you.
                             Your tasks, handovers and deadlines are right where you left them.
                         </p>
 
-                        <div className="tk-rise mt-9 rounded-2xl bg-white/[0.04] p-5 ring-1 ring-inset ring-white/10 backdrop-blur-sm">
+                        <div
+                            aria-hidden="true"
+                            className="mt-9 rounded-[28px] bg-white p-6 shadow-[0_1px_3px_rgba(60,64,67,0.3),0_4px_8px_3px_rgba(60,64,67,0.15)]"
+                        >
                             <div className="flex items-baseline justify-between">
-                                <span className="text-[13px] font-medium text-white/85">Account recovery</span>
-                                <span className="text-[12px] text-white/40 tabular-nums">Step 1 of 3</span>
+                                <span className="text-[20px] font-medium">Account recovery</span>
+                                <span className="text-[13px] tabular-nums text-[#5f6368]">
+                                    Step 1 of {recoverySteps.length}
+                                </span>
                             </div>
 
-                            <div className="mt-3 h-[3px] w-full overflow-hidden rounded-full bg-white/10">
-                                <div className="tk-bar h-full w-1/3 rounded-full bg-[#1F8A70]" />
+                            <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-[#f1f3f4]">
+                                <div
+                                    className="h-full rounded-full bg-[#1a73e8]"
+                                    style={{ width: `${(1 / recoverySteps.length) * 100}%` }}
+                                />
                             </div>
 
-                            <ul className="mt-2 divide-y divide-white/[0.06]">
-                                <Step label="Enter your account email" meta="Now" active delay={220} />
-                                <Step label="Enter the verification code" meta="Next" delay={340} />
-                                <Step label="Choose a new password" meta="Then" delay={460} />
+                            <ul className="mt-2 divide-y divide-[#dadce0]">
+                                {recoverySteps.map((step) => (
+                                    <Step key={step.label} {...step} />
+                                ))}
                             </ul>
                         </div>
                     </div>
 
-                    <div className="relative flex items-center gap-2">
-                        <span className="relative flex h-1.5 w-1.5">
-                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1F8A70] opacity-60" />
-                            <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#1F8A70]" />
+                    <div className="flex items-center gap-2">
+                        <span className="relative flex h-2 w-2">
+                            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#1e8e3e] opacity-60" />
+                            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#1e8e3e]" />
                         </span>
-                        <span className="text-[12px] text-white/40">All systems operational</span>
+                        <span className="text-[13px] text-[#5f6368]">
+                            All systems operational
+                        </span>
                     </div>
                 </aside>
 
+                {/* ---------------- Form column ---------------- */}
                 <div className="flex min-h-screen flex-col px-5 sm:px-8">
                     <header className="flex items-center justify-between py-6 lg:hidden">
-                        <Wordmark tone="light" />
-                        <span className="flex items-center gap-1.5 text-[12px] text-[#6B7480]">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#1F8A70]" />
+                        <Wordmark />
+                        <span className="flex items-center gap-1.5 text-[12px] text-[#5f6368]">
+                            <span className="h-1.5 w-1.5 rounded-full bg-[#1e8e3e]" />
                             Operational
                         </span>
                     </header>
 
                     <main className="flex flex-1 items-center justify-center py-6 lg:py-10">
                         <div className="w-full max-w-[26rem]">
-                            <div className="rounded-[20px] border border-[#E2E5E9] bg-white p-7 sm:p-9 shadow-[0_1px_2px_rgba(19,26,34,0.04),0_12px_32px_-12px_rgba(19,26,34,0.14)]">
-                                <h1 className="text-[27px] font-semibold tracking-[-0.03em] text-[#131A22]">
+                            <div className="rounded-[28px] border border-[#dadce0] bg-white p-7 sm:p-10">
+                                <h1 className="text-[28px] font-normal tracking-[-0.01em]">
                                     Forgot your password?
                                 </h1>
-                                <p className="mt-1.5 text-[14px] leading-relaxed text-[#6B7480]">
+                                <p className="mt-2 text-[15px] leading-relaxed text-[#5f6368]">
                                     Enter the email address associated with your account and we&apos;ll send you a verification code.
                                 </p>
 
@@ -164,11 +149,11 @@ const ForgotPasswordCMP = () => {
                                     </div>
                                 )}
 
-                                <form onSubmit={handleSubmit} className="mt-7 space-y-5">
+                                <form onSubmit={handleSubmit} className="mt-8 space-y-5">
                                     <div>
                                         <label
                                             htmlFor="email"
-                                            className="mb-1.5 block text-[13px] font-medium text-[#3D4753]"
+                                            className="mb-1.5 block text-[13px] font-medium text-[#5f6368]"
                                         >
                                             Email address
                                         </label>
@@ -181,18 +166,14 @@ const ForgotPasswordCMP = () => {
                                             placeholder="you@company.com"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
-                                            className={inputBase}
+                                            className={inputClass}
                                         />
                                     </div>
 
                                     <button
                                         type="submit"
                                         disabled={fetching}
-                                        className="flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#131A22] py-3 text-[14.5px] font-medium text-white
-                                            shadow-[0_1px_2px_rgba(19,26,34,0.25)] transition-colors duration-150
-                                            hover:bg-[#1F2A38] active:bg-[#0D1621]
-                                            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1F8A70] focus-visible:ring-offset-2
-                                            disabled:cursor-not-allowed disabled:opacity-55"
+                                        className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#1a73e8] text-[15px] font-medium text-white transition-colors hover:bg-[#1765cc] hover:shadow-[0_1px_2px_rgba(60,64,67,0.3),0_1px_3px_1px_rgba(60,64,67,0.15)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1a73e8] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
                                     >
                                         {fetching && (
                                             <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
@@ -208,7 +189,7 @@ const ForgotPasswordCMP = () => {
                             <div className="mt-6 flex justify-center">
                                 <Link
                                     to="/login"
-                                    className="inline-flex items-center gap-1.5 text-[14px] font-medium text-[#131A22] underline-offset-4 hover:underline"
+                                    className="inline-flex items-center gap-1.5 text-[14px] font-medium text-[#1a73e8] hover:underline"
                                 >
                                     <ArrowLeft size={14} strokeWidth={2.2} />
                                     Back to Login
@@ -218,14 +199,14 @@ const ForgotPasswordCMP = () => {
                     </main>
 
                     <footer className="flex flex-col items-center gap-3 py-7 sm:flex-row sm:justify-between">
-                        <span className="flex items-center gap-1.5 text-[12px] text-[#8B939D]">
+                        <span className="flex items-center gap-1.5 text-[12px] text-[#5f6368]">
                             <Lock size={12} strokeWidth={2.2} />
                             Secure account recovery
                         </span>
-                        <nav className="flex items-center gap-5 text-[12px] text-[#8B939D]">
-                            <Link to="/privacy" className="transition-colors hover:text-[#131A22]">Privacy</Link>
-                            <Link to="/terms" className="transition-colors hover:text-[#131A22]">Terms</Link>
-                            <Link to="/help" className="transition-colors hover:text-[#131A22]">Help</Link>
+                        <nav className="flex items-center gap-5 text-[12px] text-[#5f6368]">
+                            <Link to="/privacy" className="transition-colors hover:text-[#202124]">Privacy</Link>
+                            <Link to="/terms" className="transition-colors hover:text-[#202124]">Terms</Link>
+                            <Link to="/help" className="transition-colors hover:text-[#202124]">Help</Link>
                         </nav>
                     </footer>
                 </div>

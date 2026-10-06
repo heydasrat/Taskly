@@ -135,11 +135,11 @@ const Todo = () => {
 
   return (
     <div
-      className={`tk-root w-full min-h-screen antialiased transition-colors duration-200 ${pageClass}`}
+      className={`tk-dashboard w-full min-h-screen antialiased transition-colors duration-200 ${pageClass}`}
     >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
-        .tk-root{font-family:'Instrument Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-feature-settings:'ss01','cv01';}
+        .tk-dashboard{font-family:'Instrument Sans',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;font-feature-settings:'ss01','cv01';}
       `}</style>
 
       <div className="flex justify-center px-4">

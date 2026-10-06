@@ -5,12 +5,7 @@ import uploadOnCloudinary from "../utils/uploadOnCloudinary.js";
 import { v2 as cloudinary } from "cloudinary";
 import { sendResponse } from "../utils/response.utils.js";
 import { publicUserObj } from "../utils/user.utils.js";
-
-const options = {
-    secure: true,
-    httpOnly: true,
-    sameSite: "strict",
-};
+import options from "../utils/cookiesOption.js";
 
 const updateProfile = asyncHandler(async (req, res) => {
     const { username, fullName } = req.body;
@@ -179,7 +174,7 @@ const toggleTheme = asyncHandler(async (req, res) => {
             },
         },
         {
-           returnDocument: "after",
+            returnDocument: "after",
         }
     );
 
