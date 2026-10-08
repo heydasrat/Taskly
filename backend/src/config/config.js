@@ -3,6 +3,10 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "development";
+}
+
 if (!process.env.PORT) {
   throw new Error("PORT is not defined");
 }
@@ -84,6 +88,11 @@ const config = {
   googleUserEmail: process.env.EMAIL_USER,
   passwordResetToken: process.env.RESET_PASSWORD_TOKEN,
   passwordResetTokenExpiry: process.env.RESET_PASSWORD_TOKEN_EXPIRY,
+  googleAuthClientId: process.env.GOOGLE_Auth_CLIENT_ID,
+  googleAuthClientSecret: process.env.GOOGLE_Auth_CLIENT_SECRET,
+  google_jwt_secret: process.env.JWT_SECRET,
+  frontendURL:"http://localhost:5173/",
+  nodeEnv:"development"
 };
 
 export default config;

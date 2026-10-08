@@ -89,7 +89,7 @@ const VerifyOTPCMP = () => {
             setFetching(true);
             const response = await api.post("/auth/verify-otp", { otp, email });
             if (response.data.success) {
-                navigate("/reset-password", { state: { resetToken: response.data.data.resetToken } });
+                navigate("/reset-password", { state: { resetToken: response.data.data } });
             }
         } catch (error) {
             setError(error.response.data.message);

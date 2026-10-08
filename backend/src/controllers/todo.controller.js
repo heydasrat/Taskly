@@ -30,10 +30,6 @@ const getTodos = asyncHandler(async (req, res) => {
         user: req.user._id,
     });
 
-    if (todos.length === 0) {
-        throw new ApiError(404, "Todos not found");
-    }
-
     return sendResponse(
         res,
         200,

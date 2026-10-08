@@ -1,22 +1,22 @@
-import mongoose from "mongoose";
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import config from '../config/config.js'
+import mongoose from "mongoose"
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
+import config from "../config/config.js"
 
 const userSchema = new mongoose.Schema(
     {
         username: {
             type: String,
-            required: true,
             unique: true,
+            sparse: true,
             lowercase: true,
             trim: true,
             minlength: 3,
             maxlength: 20,
             match: [
                 /^[a-zA-Z0-9_]+$/,
-                "Username can only contain letters, numbers, and underscores",
-            ],
+                "Username can only contain letters, numbers, and underscores"
+            ]
         },
 
         fullName: {
@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema(
             required: true,
             trim: true,
             minlength: 3,
-            maxlength: 50,
+            maxlength: 50
         },
 
         email: {
@@ -35,14 +35,20 @@ const userSchema = new mongoose.Schema(
             trim: true,
             match: [
                 /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                "Please enter a valid email address",
-            ],
+                "Please enter a valid email address"
+            ]
         },
 
         password: {
             type: String,
-            required: true,
-            minlength: 8,
+            minlength: 8
+        },
+
+        googleId: {
+            type: String,
+            unique: true,
+            sparse: true,
+            index: true
         },
 
         avatar: {
@@ -50,11 +56,13 @@ const userSchema = new mongoose.Schema(
                 type: String,
                 default: ""
             },
+
             public_id: {
                 type: String,
                 default: ""
             }
         },
+
         preferences: {
             theme: {
                 type: String,
@@ -65,43 +73,58 @@ const userSchema = new mongoose.Schema(
 
         refreshToken: {
             type: String,
-            default: null,
+            default: null
         },
+
         isVerified: {
             type: Boolean,
             default: false
         }
     },
     {
-        timestamps: true,
+        timestamps: true
     }
-);
-
+)
 
 userSchema.pre("save", async function () {
-    if (!this.isModified("password")) return;
+    if (!this.isModified("password") || !this.password) return
+
     this.password = await bcrypt.hash(this.password, 10)
 })
 
 userSchema.methods.isPasswordCorrect = async function (password) {
+    if (!this.password) return false
+
     return await bcrypt.compare(password, this.password)
 }
 
 userSchema.methods.generateAccessToken = function () {
-    return jwt.sign({
-        _id: this._id,
-        email: this.email,
-        username: this.username,
-    },
-        config.accessTokenSecret, { expiresIn: config.accessTokenExpiry })
+    return jwt.sign(
+        {
+            _id: this._id,
+            email: this.email,
+            username: this.username
+        },
+        config.accessTokenSecret,
+        {
+            expiresIn: config.accessTokenExpiry
+        }
+    )
 }
+
 userSchema.methods.generateRefreshToken = function () {
-    return jwt.sign({
-        _id: this._id,
-    },
-        config.refreshTokenSecret, { expiresIn: config.refreshTokenExpiry })
+    return jwt.sign(
+        {
+            _id: this._id
+        },
+        config.refreshTokenSecret,
+        {
+            expiresIn: config.refreshTokenExpiry
+        }
+    )
 }
 
+const User = mongoose.model("User", userSchema)
 
-const User = mongoose.model("User", userSchema);
 export default User
+

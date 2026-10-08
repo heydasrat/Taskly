@@ -49,6 +49,7 @@ const Navbar = () => {
     // Theme switching — same backend endpoint as Settings
     const handleChangeTheme = async () => {
         if (themeLoading) return
+        
 
         const newTheme = isDark ? "light" : "dark"
 
@@ -144,11 +145,10 @@ const Navbar = () => {
                     className="flex items-center gap-2.5 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1F8A70]/40"
                 >
                     <div
-                        className={`grid h-8 w-8 place-items-center rounded-[10px] text-white ${
-                            isDark
+                        className={`grid h-8 w-8 place-items-center rounded-[10px] text-white ${isDark
                                 ? "bg-white/10 ring-1 ring-inset ring-white/15"
                                 : "bg-[#131A22]"
-                        }`}
+                            }`}
                     >
                         <Lock size={15} strokeWidth={2.2} />
                     </div>
@@ -172,21 +172,18 @@ const Navbar = () => {
                     >
                         {user?.avatar?.url ? (
                             <img
-                                src={user.avatar.url}
+                                src={user?.avatar?.url}
                                 alt="Profile"
-                                className={`h-9 w-9 rounded-full object-cover ring-2 ${
-                                    isDark
-                                        ? "ring-white/10"
-                                        : "ring-[#E2E5E9]"
-                                }`}
+                                width={36}
+                                height={36}
+                                className="h-9 w-9 rounded-full object-cover"
                             />
                         ) : (
                             <div
-                                className={`flex h-9 w-9 items-center justify-center rounded-full ${
-                                    isDark
+                                className={`flex h-9 w-9 items-center justify-center rounded-full ${isDark
                                         ? "bg-white/10 text-white/70"
                                         : "bg-[#EDEFF2] text-[#6B7480]"
-                                }`}
+                                    }`}
                             >
                                 <User size={18} strokeWidth={2} />
                             </div>
@@ -209,9 +206,8 @@ const Navbar = () => {
                         <ChevronDown
                             size={16}
                             strokeWidth={2}
-                            className={`ml-0.5 transition-transform duration-200 ${mutedClass} ${
-                                showMenu ? "rotate-180" : ""
-                            }`}
+                            className={`ml-0.5 transition-transform duration-200 ${mutedClass} ${showMenu ? "rotate-180" : ""
+                                }`}
                         />
                     </button>
 
@@ -267,11 +263,10 @@ const Navbar = () => {
 
                                 {!themeLoading && (
                                     <span
-                                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                                            isDark
+                                        className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${isDark
                                                 ? "bg-white/10 text-white/60"
                                                 : "bg-[#EDEFF2] text-[#6B7480]"
-                                        }`}
+                                            }`}
                                     >
                                         {isDark ? "DARK" : "LIGHT"}
                                     </span>
